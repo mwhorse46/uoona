@@ -1,0 +1,16 @@
+name: Deploy to Edgio
+
+on:
+  workflow_dispatch:
+  push:
+
+jobs:
+  deploy-to-edgio:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+      - run: if [ -f yarn.lock ]; then yarn install; else npm ci; fi
+      - run: if [ -f yarn.lock ]; then yarn edgio:deploy -- --token=$EDGIO_DEPLOY_TOKEN; else npm run edgio:deploy -- --token=$EDGIO_DEPLOY_TOKEN; fi
+        env:
+          EDGIO_DEPLOY_TOKEN: ${{secrets.EDGIO_DEPLOY_TOKEN}}
